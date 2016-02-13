@@ -5,7 +5,7 @@
 #include "signalDrawer.h"
 
 
-signalDrawer::signalDrawer(){
+signalDrawer::signalDrawer(uint8_t tft_cs, uint8_t tft_dc){
   this->xMin = 0;
   this->xMax = ILI9341_TFTHEIGHT;
   this->yMin = 0;
@@ -19,6 +19,10 @@ signalDrawer::signalDrawer(){
   this->y1Point = 0;
   this->y2Point = 0;
   this->offset = 0;
+  this->tft = ILI9341_t3(tft_cs, tft_dc);
+  tft.begin();
+  tft.setRotation(1);
+  tft.fillScreen(ILI9341_BLACK);
 }
 
 void signalDrawer::setScreenDimension(uint16_t xmin, uint16_t xmax, uint16_t ymin, uint16_t ymax){
@@ -37,15 +41,15 @@ void signalDrawer::setColors(uint16_t backgroundColor, uint16_t signalColor){
   this->signalColor = signalColor;
 }
 
-void signalDrawer::setScale(uint16_t frequencyScale, uint16_t amplitudeScale, uint16_t offset){
+void signalDrawer::setScale(uint16_t frequencyScale, float amplitudeScale, int16_t offset){
   this->frequencyScale = frequencyScale;
   this->amplitudeScale = amplitudeScale;
   this->offset = offset;
 }
 
-void signalDrawer::drawSignal(ILI9341_t3 & tft) {
+void signalDrawer::drawSignal() {
 
-	y2Point = analogRead(analogPin)/amplitudeScale - offset;
+	y2Point = (double)analogRead(analogPin)/amplitudeScale - offset;
 
 	if (x2Point < xMax) {
 		x2Point = x1Point + 1;
@@ -77,8 +81,9 @@ void signalDrawer::drawSignal(ILI9341_t3 & tft) {
 	delay(frequencyScale);
 }
 
-void signalDrawer::drawMenu(ILI9341_t3 & tft) {
-
+void signalDrawer::drawMenu() {
+  
+  tft.fillScreen(ILI9341_BLACK);
 	tft.drawFastVLine(160, 0, 80, ILI9341_CYAN);
 	tft.drawFastVLine(160, 160, 80, ILI9341_CYAN);
 	tft.drawFastVLine(100, 80, 80, ILI9341_CYAN);
@@ -96,7 +101,7 @@ void signalDrawer::drawMenu(ILI9341_t3 & tft) {
 	tft.print("A+");
 	tft.setCursor(200, 175);
 	tft.print("A-");
-  tft.setTextColor(ILI9341_RED);
+	tft.setTextColor(ILI9341_RED);
 	tft.setTextSize(4);
 	tft.setCursor(115, 105);
 	tft.print("MENU");
@@ -106,6 +111,137 @@ void signalDrawer::drawMenu(ILI9341_t3 & tft) {
 	tft.setCursor(250, 105);
 	tft.print("F+");
 
+}
+
+void signalDrawer::decreaseOffset() {
+
+	if (offset - 10 > -500) {
+		offset -= 10;
+	}
+	else {
+		tft.fillScreen(ILI9341_BLACK);
+		tft.setCursor(50, 105);
+		tft.setTextColor(ILI9341_RED);
+		tft.print("Limit Reached");
+		delay(1000);
+	}
+}
+void signalDrawer::increaseOffset() {
+
+	if (offset + 10 < 1000) {
+		offset += 10;
+	}
+	else {
+		tft.fillScreen(ILI9341_BLACK);
+		tft.setCursor(50, 105);
+		tft.setTextColor(ILI9341_RED);
+		tft.print("Limit Reached");
+		delay(1000);
+	}
+}
+void signalDrawer::decreaseFrequency(){
+
+	if (frequencyScale - 10 > 0) {
+		frequencyScale -= 10;
+	}
+	else if (frequencyScale - 1 > 0) {
+		frequencyScale -= 1;
+	}
+	else {
+		tft.fillScreen(ILI9341_BLACK);
+		tft.setCursor(50, 105);
+		tft.setTextColor(ILI9341_RED);
+		tft.print("Limit Reached");
+		delay(1000);
+	}
+}
+void signalDrawer::increaseFrequency(){
+
+	if (frequencyScale + 1 < 10) {
+		frequencyScale += 1;
+	}
+	else if (frequencyScale + 10 < 1000) {
+		frequencyScale += 10;
+	}
+	else {
+		tft.fillScreen(ILI9341_BLACK);
+		tft.setCursor(50, 105);
+		tft.setTextColor(ILI9341_RED);
+		tft.print("Limit Reached");
+		delay(1000);
+	}
+}
+void signalDrawer::decreaseAmplitude(){
+
+	if (amplitudeScale + 0.2 < 10) {
+		amplitudeScale += 0.2;
+	}
+	else {
+		tft.fillScreen(ILI9341_BLACK);
+		tft.setCursor(50, 105);
+		tft.setTextColor(ILI9341_RED);
+		tft.print("Limit Reached");
+		delay(1000);
+	}
+}
+void signalDrawer::increaseAmplitude(){
+
+	if (amplitudeScale - 0.2 > 0) {
+		amplitudeScale -= 0.2;
+	}
+	else {
+		tft.fillScreen(ILI9341_BLACK);
+		tft.setCursor(50, 105);
+		tft.setTextColor(ILI9341_RED);
+		tft.print("Limit Reached");
+		delay(1000);
+	}
+}
+
+void signalDrawer::menuAction(TS_Point p) {
+	if (p.x > 2700) {
+		if (p.y < 1900) {
+			this->increaseOffset();
+			delay(200);
+		}
+		else {
+			this->increaseAmplitude();
+			delay(200);
+		}
+	}
+	else if (p.x <= 2700 && p.x >= 1400) {
+		if (p.y <= 1300) {
+			this->decreaseFrequency();
+			delay(200);
+		}
+		else if (p.y >= 2600) {
+			this->increaseFrequency();
+			delay(200);
+		}
+		else {
+			//TODO: Handle menu 
+			this->setScale(50, 5, 0);
+			tft.fillScreen(ILI9341_WHITE);
+			tft.setTextSize(8);
+			tft.print("MENU");
+			delay(200);
+		}
+	}
+	else if (p.x < 1400) {
+		if (p.y < 1900) {
+			this->decreaseOffset();
+			delay(200);
+		}
+		else {
+			this->decreaseAmplitude();
+			delay(200);
+		}
+	}
+	tft.fillScreen(ILI9341_BLACK);
+}
+
+void signalDrawer::drawBlank(){
+  tft.fillScreen(ILI9341_BLACK);
 }
 
 
