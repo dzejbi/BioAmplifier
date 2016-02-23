@@ -20,9 +20,12 @@ signalDrawer::signalDrawer(uint8_t tft_cs, uint8_t tft_dc){
   this->y2Point = 0;
   this->offset = 0;
   this->tft = ILI9341_t3(tft_cs, tft_dc);
+  for (int i = 0; i < 320; i++) {
+	  this->pointsHistory[i]= 0;
+  }
   tft.begin();
   tft.setRotation(1);
-  tft.fillScreen(ILI9341_BLACK);
+  drawBlank();
 }
 
 void signalDrawer::setScreenDimension(uint16_t xmin, uint16_t xmax, uint16_t ymin, uint16_t ymax){
@@ -47,70 +50,88 @@ void signalDrawer::setScale(uint16_t frequencyScale, float amplitudeScale, int16
   this->offset = offset;
 }
 
-void signalDrawer::drawSignal() {
-
-	y2Point = (double)analogRead(analogPin)/amplitudeScale - offset;
-
-	if (x2Point < xMax) {
-		x2Point = x1Point + 1;
-	}else {
-		x2Point = xMin;
-		//TODO Set navigation
-		tft.fillScreen(backgroundColor);
-	}
-
-	Serial.print("x1 = ");
-	Serial.print(x1Point);
-	Serial.print(" x2 = ");
-	Serial.print(x2Point);
-	Serial.print(" y1 = ");
-	Serial.print(y1Point);
-	Serial.print(" y2 = ");
-	Serial.println(y2Point);
-
-	if(x2Point < x1Point) {
-		x1Point = 0;
-		x2Point = 1;
-	}
-
-	tft.drawLine(x1Point, y1Point, x2Point, y2Point, signalColor);
-	// tft.drawPixel(x2Point, y2Point, signalColor);
+void signalDrawer::getNewPoint() {
 
 	x1Point = x2Point;
 	y1Point = y2Point;
+
+	y2Point = (float)(analogRead(analogPin) / amplitudeScale) - offset;
+
+	if (x2Point < xMax) {
+		x2Point = x1Point + 1;
+	}
+	else {
+		x2Point = xMin + 1;
+		x1Point = xMin;
+	}
+
 	delay(frequencyScale);
 }
 
+void signalDrawer::drawSignal() {
+
+	if (x1Point == xMin) {
+		drawBlank();
+	}
+	tft.drawLine(x1Point, y1Point, x2Point, y2Point, signalColor);
+	// tft.drawPixel(x2Point, y2Point, signalColor);
+
+}
+
+void signalDrawer::drawSignal(uint16_t* signal) {
+
+	signal[0] = signal[1];
+	for (int i = 0; i < x2Point; i++) {
+		tft.drawLine(i, signal[i], i+1, signal[i+1], ILI9341_RED);
+	}
+}
+
+void signalDrawer::addPointToHistory() {
+	pointsHistory[x2Point-1] = y2Point;
+}
+
+
+
 void signalDrawer::drawMenu() {
   
-  tft.fillScreen(ILI9341_BLACK);
-	tft.drawFastVLine(160, 0, 80, ILI9341_CYAN);
+	drawBlank();
+	tft.drawFastVLine(100, 0, 160, ILI9341_CYAN);
+	tft.drawFastVLine(220, 0, 160, ILI9341_CYAN);
 	tft.drawFastVLine(160, 160, 80, ILI9341_CYAN);
-	tft.drawFastVLine(100, 80, 80, ILI9341_CYAN);
-	tft.drawFastVLine(220, 80, 80, ILI9341_CYAN);
 	tft.drawFastHLine(0, 80, 320, ILI9341_CYAN);
 	tft.drawFastHLine(0, 160, 320, ILI9341_CYAN);
 	tft.setTextColor(ILI9341_DARKGREEN);
 	tft.setTextSize(8);
-	tft.setCursor(30, 10);
-	tft.print("O+");
 	tft.setCursor(30, 175);
-	tft.print("O-");
-	tft.setTextColor(ILI9341_BLUE);
-	tft.setCursor(200, 10);
-	tft.print("A+");
+	tft.print("F-");
 	tft.setCursor(200, 175);
-	tft.print("A-");
+	tft.print("F+");
 	tft.setTextColor(ILI9341_RED);
 	tft.setTextSize(4);
 	tft.setCursor(115, 105);
 	tft.print("MENU");
 	tft.setTextColor(ILI9341_WHITE);
 	tft.setCursor(30, 105);
-	tft.print("F-");
+	tft.print("O-");
 	tft.setCursor(250, 105);
-	tft.print("F+");
+	tft.print("A-");
+	tft.setTextColor(ILI9341_BLUE);
+	tft.setCursor(250, 25);
+	tft.print("A+");
+	tft.setCursor(30, 25);
+	tft.print("O+");
+	tft.setTextColor(ILI9341_YELLOW);
+	tft.setCursor(115, 25);
+	tft.print("SNAP");
 
+}
+
+void signalDrawer::drawLimitInfo(){
+	tft.fillScreen(ILI9341_BLACK);
+	tft.setCursor(50, 105);
+	tft.setTextColor(ILI9341_RED);
+	tft.print("Limit Reached");
+	delay(1000);
 }
 
 void signalDrawer::decreaseOffset() {
@@ -119,11 +140,7 @@ void signalDrawer::decreaseOffset() {
 		offset -= 10;
 	}
 	else {
-		tft.fillScreen(ILI9341_BLACK);
-		tft.setCursor(50, 105);
-		tft.setTextColor(ILI9341_RED);
-		tft.print("Limit Reached");
-		delay(1000);
+		drawLimitInfo();
 	}
 }
 void signalDrawer::increaseOffset() {
@@ -132,11 +149,7 @@ void signalDrawer::increaseOffset() {
 		offset += 10;
 	}
 	else {
-		tft.fillScreen(ILI9341_BLACK);
-		tft.setCursor(50, 105);
-		tft.setTextColor(ILI9341_RED);
-		tft.print("Limit Reached");
-		delay(1000);
+		drawLimitInfo();
 	}
 }
 void signalDrawer::decreaseFrequency(){
@@ -148,11 +161,7 @@ void signalDrawer::decreaseFrequency(){
 		frequencyScale -= 1;
 	}
 	else {
-		tft.fillScreen(ILI9341_BLACK);
-		tft.setCursor(50, 105);
-		tft.setTextColor(ILI9341_RED);
-		tft.print("Limit Reached");
-		delay(1000);
+		drawLimitInfo();
 	}
 }
 void signalDrawer::increaseFrequency(){
@@ -164,11 +173,7 @@ void signalDrawer::increaseFrequency(){
 		frequencyScale += 10;
 	}
 	else {
-		tft.fillScreen(ILI9341_BLACK);
-		tft.setCursor(50, 105);
-		tft.setTextColor(ILI9341_RED);
-		tft.print("Limit Reached");
-		delay(1000);
+		drawLimitInfo();
 	}
 }
 void signalDrawer::decreaseAmplitude(){
@@ -177,11 +182,7 @@ void signalDrawer::decreaseAmplitude(){
 		amplitudeScale += 0.2;
 	}
 	else {
-		tft.fillScreen(ILI9341_BLACK);
-		tft.setCursor(50, 105);
-		tft.setTextColor(ILI9341_RED);
-		tft.print("Limit Reached");
-		delay(1000);
+		drawLimitInfo();
 	}
 }
 void signalDrawer::increaseAmplitude(){
@@ -190,37 +191,40 @@ void signalDrawer::increaseAmplitude(){
 		amplitudeScale -= 0.2;
 	}
 	else {
-		tft.fillScreen(ILI9341_BLACK);
-		tft.setCursor(50, 105);
-		tft.setTextColor(ILI9341_RED);
-		tft.print("Limit Reached");
-		delay(1000);
+		drawLimitInfo();
 	}
 }
 
 void signalDrawer::menuAction(TS_Point p) {
 	if (p.x > 2700) {
-		if (p.y < 1900) {
-			this->increaseOffset();
+		if (p.y <= 1300) {
+			increaseOffset();
 			delay(200);
 		}
+		else if(p.y <= 2600) {
+			//TODO snapshot
+			drawBlank();
+			drawSignal(getPointsHistory());
+			delay(200);
+			reset();
+		}
 		else {
-			this->increaseAmplitude();
+			increaseAmplitude();
 			delay(200);
 		}
 	}
-	else if (p.x <= 2700 && p.x >= 1400) {
+	else if (p.x >= 1400) {
 		if (p.y <= 1300) {
-			this->decreaseFrequency();
+			decreaseOffset();
 			delay(200);
 		}
 		else if (p.y >= 2600) {
-			this->increaseFrequency();
+			decreaseAmplitude();
 			delay(200);
 		}
 		else {
 			//TODO: Handle menu 
-			this->setScale(50, 5, 0);
+			setScale(50, 5, 0);
 			tft.fillScreen(ILI9341_WHITE);
 			tft.setTextSize(8);
 			tft.print("MENU");
@@ -229,19 +233,29 @@ void signalDrawer::menuAction(TS_Point p) {
 	}
 	else if (p.x < 1400) {
 		if (p.y < 1900) {
-			this->decreaseOffset();
+			decreaseFrequency();
 			delay(200);
 		}
 		else {
-			this->decreaseAmplitude();
+			increaseFrequency();
 			delay(200);
 		}
 	}
-	tft.fillScreen(ILI9341_BLACK);
+	reset();
+}
+
+uint16_t* signalDrawer::getPointsHistory() {
+	return pointsHistory;
 }
 
 void signalDrawer::drawBlank(){
-  tft.fillScreen(ILI9341_BLACK);
+  tft.fillScreen(backgroundColor);
+}
+
+void signalDrawer::reset() {
+	drawBlank();
+	x1Point = 0;
+	x2Point = 0;
 }
 
 

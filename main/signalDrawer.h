@@ -18,27 +18,33 @@ class signalDrawer{
 	uint16_t y2Point;
 	uint16_t frequencyScale;
 	int16_t offset;
-	double amplitudeScale;
+	float amplitudeScale;
 	char analogPin;
-
+	uint16_t pointsHistory[320];
 	void decreaseOffset();
 	void increaseOffset();
 	void decreaseFrequency();
 	void increaseFrequency();
 	void decreaseAmplitude();
 	void increaseAmplitude();
+	void drawLimitInfo();
     
   public: 
     signalDrawer(uint8_t tft_cs, uint8_t tft_dc);
-	signalDrawer();
     void setScreenDimension(uint16_t xmin, uint16_t xmax, uint16_t ymin, uint16_t ymax);
     void setAnalogPin(char analogPin);
     void setColors(uint16_t backgroundColor, uint16_t signalColor);
     void setScale(uint16_t frequencyScale, float amplitudeScale, int16_t offset);
+	void getNewPoint();
     void drawSignal();
+	void drawSignal(uint16_t* signal);
+	void addPointToHistory();
 	void drawMenu();
 	void menuAction(TS_Point p);
 	void drawBlank();
+	void reset();
+	uint16_t* getPointsHistory();
+
 };
 
 #endif

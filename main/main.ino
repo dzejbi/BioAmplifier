@@ -23,7 +23,10 @@ void setup() {
 
 void loop() {
 
+	sigDraw.getNewPoint();
 	sigDraw.drawSignal();
+	sigDraw.addPointToHistory();
+
 	if (ts.touched()) {
 		sigDraw.drawMenu();
 		delay(500);
@@ -37,4 +40,5 @@ void loop() {
 		}
 	sigDraw.drawBlank();
 	}
+	
 }
