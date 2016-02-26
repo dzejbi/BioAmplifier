@@ -24,9 +24,27 @@
     <ClInclude Include="signalDrawer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="XPT2046_Touchscreen_v1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicScreenProperties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalScaleHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="signalDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XPT2046_Touchscreen_v1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicScreenProperties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalScaleHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

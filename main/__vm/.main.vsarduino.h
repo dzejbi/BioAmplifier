@@ -57,6 +57,12 @@ typedef void *__builtin_va_list;
 
 #define NEW_H
 #include <..\main\main.ino>
+#include <..\main\BasicScreenProperties.cpp>
+#include <..\main\BasicScreenProperties.h>
+#include <..\main\SignalScaleHandler.cpp>
+#include <..\main\SignalScaleHandler.h>
+#include <..\main\XPT2046_Touchscreen_v1.cpp>
+#include <..\main\XPT2046_Touchscreen_v1.h>
 #include <..\main\signalDrawer.cpp>
 #include <..\main\signalDrawer.h>
 #endif

@@ -3,46 +3,36 @@
 
 #include<WProgram.h>
 
-class signalDrawer{
+class SignalDrawer{
   private:
-	ILI9341_t3 tft = ILI9341_t3(10, 9);
-    uint16_t xMin;
-    uint16_t yMin;
-    uint16_t xMax;
-    uint16_t yMax;
-    uint16_t backgroundColor;
-    uint16_t signalColor;
-	uint16_t x1Point;
-	uint16_t x2Point;
-	uint16_t y1Point;
-	uint16_t y2Point;
-	uint16_t frequencyScale;
-	int16_t offset;
-	float amplitudeScale;
+	ILI9341_t3* tft;
+	BasicScreenProperties basicScreenProperties;
+	SignalScaleHandler signalScaleHandler;
+	uint16_t signalColor;
+	uint16_t previousXPoint;
+	uint16_t currentXPoint;
+	uint16_t previousYPoint;
+	uint16_t currentYPoint;
 	char analogPin;
 	uint16_t pointsHistory[320];
-	void decreaseOffset();
-	void increaseOffset();
-	void decreaseFrequency();
-	void increaseFrequency();
-	void decreaseAmplitude();
-	void increaseAmplitude();
-	void drawLimitInfo();
+	void drawScaleMenu();
+	void drawMenu3x3(uint16_t colorLine);
     
   public: 
-    signalDrawer(uint8_t tft_cs, uint8_t tft_dc);
-    void setScreenDimension(uint16_t xmin, uint16_t xmax, uint16_t ymin, uint16_t ymax);
+	void drawMenuNumbers(uint16_t color);
+	void drawMenuScale(uint16_t color);
+	SignalDrawer(ILI9341_t3* tft);
     void setAnalogPin(char analogPin);
-    void setColors(uint16_t backgroundColor, uint16_t signalColor);
-    void setScale(uint16_t frequencyScale, float amplitudeScale, int16_t offset);
+    void setSignalColor(uint16_t signalColor);
 	void getNewPoint();
     void drawSignal();
 	void drawSignal(uint16_t* signal);
 	void addPointToHistory();
 	void drawMenu();
 	void menuAction(TS_Point p);
-	void drawBlank();
 	void reset();
+	void drawBlank();
+	void drawInfo(String info);
 	uint16_t* getPointsHistory();
 
 };
