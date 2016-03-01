@@ -1,13 +1,12 @@
 #include <ILI9341_t3.h>
-#include <font_Arial.h> // from ILI9341_t3
-#include "XPT2046_Touchscreen_v1.h"
+#include <XPT2046_Touchscreen.h>
 #include <SPI.h>
 #include "SignalScaleHandler.h"
 #include "BasicScreenProperties.h"
 #include "signalDrawer.h"
 
 
-SignalDrawer::SignalDrawer(ILI9341_t3* tft){
+SignalDrawer::SignalDrawer(ILI9341_t3* tft, SignalScaleHandler* ssh){
   this->signalColor = ILI9341_GREEN;
   this->previousXPoint = 0;
   this->currentXPoint = 0;
@@ -19,63 +18,12 @@ SignalDrawer::SignalDrawer(ILI9341_t3* tft){
   }
   this->tft->begin();
   this->tft->setRotation(1);
-  signalScaleHandler.begin();
+  this->signalScaleHandler = ssh;
+  this->basicScreenProperties = new BasicScreenProperties();
+  signalScaleHandler->begin();
   drawBlank();
 }
 
-void SignalDrawer::menuAction(TS_Point p) {
-		if (p.x > 2700) {
-			if (p.y <= 1300) {
-				signalScaleHandler.increaseOffset();
-				delay(200);
-			}
-			else if (p.y <= 2600) {
-				//TODO snapshot
-				drawBlank();
-				drawSignal(getPointsHistory());
-				delay(200);
-				reset();
-			}
-			else {
-				signalScaleHandler.increaseAmplitude();
-				delay(200);
-			}
-		}
-		else if (p.x >= 1400) {
-			if (p.y <= 1300) {
-				signalScaleHandler.decreaseOffset();
-				delay(200);
-			}
-			else if (p.y >= 2600) {
-				signalScaleHandler.decreaseAmplitude();
-				delay(200);
-			}
-			else {
-				//TODO: Handle menu 
-				signalScaleHandler.begin();
-				tft->fillScreen(ILI9341_WHITE);
-				tft->setTextSize(8);
-				tft->print("MENU");
-				delay(200);
-			}
-		}
-		else if (p.x < 1400) {
-			if (p.y <= 1300) {
-				signalScaleHandler.decreaseFrequency();
-				delay(200);
-			}
-			else if (p.y >= 2600) {
-				signalScaleHandler.increaseFrequency();
-				delay(200);
-			}
-			else {
-				//TODO scale menu
-				//scaleMenu();
-				delay(200);
-			}
-		}
-	reset();
-}
 
 
 void SignalDrawer::setAnalogPin(char analogPin){
@@ -92,21 +40,21 @@ void SignalDrawer::getNewPoint() {
 	previousXPoint = currentXPoint;
 	previousYPoint = currentYPoint;
 	//TODO 16bit ADC
-	currentYPoint = signalScaleHandler.adjustAmplitude(analogRead(analogPin));
+	currentYPoint = signalScaleHandler->adjustAmplitude(analogRead(analogPin));
 
-	if (!basicScreenProperties.isOutOfRangeX(currentXPoint)) {
+	if (!basicScreenProperties->isOutOfRangeX(currentXPoint)) {
 		currentXPoint = previousXPoint + 1;
 	}
 	else {
-		previousXPoint = basicScreenProperties.getXMin();
+		previousXPoint = basicScreenProperties->getXMin();
 		currentXPoint = previousXPoint + 1;
 	}
-	signalScaleHandler.measurmentDelay();
+	signalScaleHandler->measurmentDelay();
 }
 
 void SignalDrawer::drawSignal() {
 
-	if (basicScreenProperties.isFirstPointInLine(previousXPoint)) {
+	if (basicScreenProperties->isFirstPointInLine(previousXPoint)) {
 		drawBlank();
 	}
 	tft->drawLine(previousXPoint, previousYPoint, currentXPoint, currentYPoint, signalColor);
@@ -129,54 +77,6 @@ uint16_t* SignalDrawer::getPointsHistory() {
 	return pointsHistory;
 }
 
-void SignalDrawer::drawMenu() {
-  
-	drawBlank();
-	drawMenu3x3(ILI9341_BLACK);
-	tft->setTextSize(4);
-
-
-	tft->setTextColor(ILI9341_DARKGREEN);
-	tft->setCursor(30, 185);
-	tft->print("F-");
-
-	tft->setCursor(250, 185);
-	tft->print("F+");
-
-	tft->setTextColor(ILI9341_RED);
-	tft->setCursor(115, 105);
-	tft->print("MENU");
-
-	tft->setTextColor(ILI9341_WHITE);
-	tft->setCursor(30, 105);
-	tft->print("O-");
-
-	tft->setCursor(250, 105);
-	tft->print("A-");
-
-	tft->setTextColor(ILI9341_BLUE);
-	tft->setCursor(250, 25);
-	tft->print("A+");
-
-	tft->setCursor(30, 25);
-	tft->print("O+");
-
-	tft->setTextColor(ILI9341_YELLOW);
-	tft->setCursor(115, 25);
-	tft->print("SNAP");
-
-	tft->setTextColor(ILI9341_PURPLE);
-	tft->setCursor(115, 190);
-	tft->setTextSize(3);
-	tft->print("SCALE");
-  
-
-}
-
-void SignalDrawer::drawScaleMenu() {
-
-
-}
 
 void SignalDrawer::drawInfo(String info){
 	tft->fillScreen(ILI9341_BLACK);
@@ -194,32 +94,10 @@ void SignalDrawer::reset() {
 }
 
 void SignalDrawer::drawBlank()
-{
-	tft->fillScreen(basicScreenProperties.getBackgroundColor());
+{	
+	tft->fillScreen(basicScreenProperties->getBackgroundColor());
 }
 
-void SignalDrawer::drawMenu3x3(uint16_t color) {
-
-	tft->fillScreen(ILI9341_LIGHTGREY);
-
-	tft->fillRoundRect(8, 8, 90, 71, 15, color);
-	tft->fillRoundRect(8, 84, 90, 71, 15, color);
-	tft->fillRoundRect(8, 160, 90, 71, 15, color);
-
-	tft->fillRoundRect(103, 8, 115, 71, 15, color);
-	tft->fillRoundRect(103, 84, 115, 71, 15, color);
-	tft->fillRoundRect(103, 160, 115, 71, 15, color);
-
-	tft->fillRoundRect(223, 8, 90, 71, 15, color);
-	tft->fillRoundRect(223, 84, 90, 71, 15, color);
-	tft->fillRoundRect(223, 160, 90, 71, 15,color);
-
-	tft->drawFastVLine(100, 0, 240, color);
-	tft->drawFastVLine(220, 0, 240, color);
-	tft->drawFastHLine(0, 80, 320, color);
-	tft->drawFastHLine(0, 160, 320, color);
-
-}
 
 void SignalDrawer::drawMenuNumbers(uint16_t color) {
 

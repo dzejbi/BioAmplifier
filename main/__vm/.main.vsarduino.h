@@ -59,10 +59,16 @@ typedef void *__builtin_va_list;
 #include <..\main\main.ino>
 #include <..\main\BasicScreenProperties.cpp>
 #include <..\main\BasicScreenProperties.h>
+#include <..\main\Button.cpp>
+#include <..\main\Button.h>
+#include <..\main\MenuHandler.cpp>
+#include <..\main\MenuHandler.h>
+#include <..\main\SignalDrawerMenuHandler.cpp>
+#include <..\main\SignalDrawerMenuHandler.h>
+#include <..\main\SignalScaleActionsEnum.h>
 #include <..\main\SignalScaleHandler.cpp>
 #include <..\main\SignalScaleHandler.h>
-#include <..\main\XPT2046_Touchscreen_v1.cpp>
-#include <..\main\XPT2046_Touchscreen_v1.h>
+#include <..\main\StateMachineEnum.h>
 #include <..\main\signalDrawer.cpp>
 #include <..\main\signalDrawer.h>
 #endif

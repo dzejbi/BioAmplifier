@@ -2,13 +2,16 @@
 #define SIGNAL_SCALE_H
 
 #include<WProgram.h>
+#include <ILI9341_t3.h>
+#include "SignalScaleActionsEnum.h"
 
 class SignalScaleHandler
 {
 private:
+	ILI9341_t3* tft;
 	uint16_t frequencyScale;
 	uint16_t frequencyLowerLimit;
-	uint16_t frequencyUpperLimit;
+	uint32_t frequencyUpperLimit;
 	uint16_t frequencyScaleStep;
 	int16_t offset;
 	int16_t offsetLowerLimit;
@@ -18,19 +21,22 @@ private:
 	float amplitudeLowerLimit;
 	float amplitudeUpperLimit;
 	float amplitudeScaleStep;
-
-public:
-	SignalScaleHandler();
 	void decreaseOffset();
 	void increaseOffset();
 	void decreaseFrequency();
 	void increaseFrequency();
 	void decreaseAmplitude();
 	void increaseAmplitude();
-	void throwLimitInfo();
+	//TODO return enumem StateMachnieEnum i  stringiem Info
+	void drawLimitInfo();
+
+public:
+	SignalScaleHandler(ILI9341_t3 * tft);
+	SignalScaleHandler();
 	uint16_t adjustAmplitude(uint16_t amplitudeReading);
 	void measurmentDelay();
 	void begin();
+	void action(SignalScaleEnum action);
 };
 
 #endif

@@ -21,27 +21,45 @@
     <ClInclude Include="__vm\.main.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BasicScreenProperties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="signalDrawer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XPT2046_Touchscreen_v1.h">
+    <ClInclude Include="SignalDrawerMenuHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BasicScreenProperties.h">
+    <ClInclude Include="SignalScaleActionsEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SignalScaleHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StateMachineEnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BasicScreenProperties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="signalDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XPT2046_Touchscreen_v1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicScreenProperties.cpp">
+    <ClCompile Include="SignalDrawerMenuHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SignalScaleHandler.cpp">
