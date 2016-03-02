@@ -58,6 +58,7 @@ void SignalDrawer::drawSignal() {
 		drawBlank();
 	}
 	tft->drawLine(previousXPoint, previousYPoint, currentXPoint, currentYPoint, signalColor);
+	addPointToHistory();
 	// tft.drawPixel(x2Point, y2Point, signalColor);
 }
 
@@ -75,15 +76,6 @@ void SignalDrawer::addPointToHistory() {
 
 uint16_t* SignalDrawer::getPointsHistory() {
 	return pointsHistory;
-}
-
-
-void SignalDrawer::drawInfo(String info){
-	tft->fillScreen(ILI9341_BLACK);
-	tft->setCursor(50, 105);
-	tft->setTextColor(ILI9341_RED);
-	tft->print(info);
-	delay(1000);
 }
 
 

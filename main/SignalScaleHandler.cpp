@@ -5,11 +5,6 @@ SignalScaleHandler::SignalScaleHandler(ILI9341_t3* tft)
 	this->tft = tft;
 }
 
-SignalScaleHandler::SignalScaleHandler(){
-
-	this->tft = new ILI9341_t3(10, 9, 7);
-}
-
 void SignalScaleHandler::decreaseOffset(){
 
 	if (offset - offsetStep > offsetLowerLimit) {
@@ -75,6 +70,7 @@ void SignalScaleHandler::drawLimitInfo()
 	tft->fillScreen(ILI9341_BLACK);
 	tft->setCursor(50, 105);
 	tft->setTextColor(ILI9341_RED);
+	tft->setTextSize(3);
 	tft->print("LIMIT REACHED");
 	delay(1000);
 }

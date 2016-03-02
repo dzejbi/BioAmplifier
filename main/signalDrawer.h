@@ -15,22 +15,26 @@ class SignalDrawer{
 	uint16_t currentYPoint;
 	char analogPin;
 	uint16_t pointsHistory[320];
+	void addPointToHistory();
 
   public: 
-	void drawMenuNumbers(uint16_t color);
-	void drawMenuScale(uint16_t color);
 	SignalDrawer(ILI9341_t3 * tft, SignalScaleHandler * ssh);
 	void setAnalogPin(char analogPin);
     void setSignalColor(uint16_t signalColor);
-	void getNewPoint();
-    void drawSignal();
-	void drawSignal(uint16_t* signal);
-	void addPointToHistory();
+
 	void reset();
 	void drawBlank();
-	void drawInfo(String info);
-	uint16_t* getPointsHistory();
 
+	void drawSignal();
+	void drawSignal(uint16_t* signal);
+
+	uint16_t* getPointsHistory();
+	// TODO put into class
+	void drawMenuNumbers(uint16_t color);
+	void drawMenuScale(uint16_t color);
+
+	//TODO new class with ADC
+	void getNewPoint();
 };
 
 #endif

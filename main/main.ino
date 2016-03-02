@@ -39,7 +39,6 @@ void loop() {
 	case SIGNAL_DRAW:
 		sigDraw.getNewPoint();
 		sigDraw.drawSignal();
-		sigDraw.addPointToHistory();
 		menu = SIGNAL_DRAW_MENU_HANDLE;
 		notTouched = SIGNAL_DRAW;
 		state = CHECK_TOUCH;

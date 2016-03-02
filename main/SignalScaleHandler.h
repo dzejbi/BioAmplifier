@@ -32,7 +32,6 @@ private:
 
 public:
 	SignalScaleHandler(ILI9341_t3 * tft);
-	SignalScaleHandler();
 	uint16_t adjustAmplitude(uint16_t amplitudeReading);
 	void measurmentDelay();
 	void begin();
