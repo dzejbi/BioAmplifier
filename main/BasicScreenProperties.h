@@ -2,7 +2,11 @@
 #ifndef BASIC_SCREEN_H
 #define BASIC_SCREEN_H
 
-#include<WProgram.h>
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "arduino.h"
+#else
+#include "WProgram.h"
+#endif
 
 class BasicScreenProperties
 {

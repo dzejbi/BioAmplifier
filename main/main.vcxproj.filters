@@ -45,6 +45,12 @@
     <ClInclude Include="StateMachineEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ADCHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DigitMenuHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicScreenProperties.cpp">
@@ -63,6 +69,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SignalScaleHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ADCHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DigitMenuHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

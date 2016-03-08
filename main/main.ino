@@ -1,3 +1,7 @@
+
+#include "DigitMenuHandler.h"
+#include "ADCHandler.h"
+#include <ADC.h>
 #include <ILI9341_t3.h>
 #include <SPI.h>
 #include <XPT2046_Touchscreen.h>
@@ -14,45 +18,72 @@
 #define TFT_CS 10
 // MOSI=11, MISO=12, SCK=13
 
+//Objects initialization
 XPT2046_Touchscreen* ts = new XPT2046_Touchscreen(CS_PIN);
 ILI9341_t3* tft = new ILI9341_t3(TFT_CS, TFT_DC, TFT_RST);
 SignalScaleHandler* signalScaleHandler = new SignalScaleHandler(tft);
-SignalDrawer sigDraw = SignalDrawer(tft, signalScaleHandler);
+SignalDrawer* signalDrawer = new SignalDrawer(tft, signalScaleHandler);
+ADCHandler* adc = new ADCHandler();
+SignalDrawerMenuHandler* signalDrawerMenuHandler = new SignalDrawerMenuHandler(tft);
+DigitMenuHandler* digitMenuHandler = new DigitMenuHandler(tft);
+
+//State machine enums
 StateMachineEnum state = SIGNAL_DRAW;
 StateMachineEnum menu;
 StateMachineEnum notTouched;
+MenuAction menuAction;
+
+//Variables used in State Machine
+float* adcValue;
 TS_Point point;
-SignalScaleEnum signalScaleAction;
-SignalDrawerMenuHandler signalDrawMenuHandler = SignalDrawerMenuHandler(tft);
 uint16_t* snapshot;
 MenuHandler* menuHandler;
+
+
+//Debug variables
+unsigned long mic;
+unsigned long mic2;
+
 
 
 void setup() {
 	Serial.begin(9600);
 	ts->begin();
+	//while(!Serial);
+	adc->start();
+	Serial.println("Setup done");
 }
 
 void loop() {
 	switch (state)
 	{
 	case SIGNAL_DRAW:
-		sigDraw.getNewPoint();
-		sigDraw.drawSignal();
+		//mic = micros();
+		adcValue = adc->getNewValue();
+		if (adcValue != nullptr) {
+			signalDrawer->drawSignal(*adcValue);
+		}
 		menu = SIGNAL_DRAW_MENU_HANDLE;
 		notTouched = SIGNAL_DRAW;
 		state = CHECK_TOUCH;
-		menuHandler = &signalDrawMenuHandler;
+		menuHandler = signalDrawerMenuHandler;
+		//mic2 = micros() - mic;
+		//Serial.print("czas wykonania signal_draw: ");
+		//Serial.println(mic2);
 		break;
 
 	case CHECK_TOUCH:
+		//mic = micros();
 		if (ts->touched()) {
 			//TODO
 			state = DRAW_MENU;
 		}
 		else {
-			state = SIGNAL_DRAW;
+			state = notTouched;
 		}
+		//mic2 = micros() - mic;
+		//Serial.print("czas wykonania check_touch: ");
+		//Serial.println(mic2);
 		break;
 
 	case DRAW_MENU:
@@ -62,7 +93,7 @@ void loop() {
 		break;
 
 	case WAIT_FOR_TOUCH:
-		for (int i = 0; i < 3000; i++) {
+		for (int i = 0; i < 100000; i++) {
 			if (ts->touched()) {
 				point = ts->getPoint();
 				state = menu;
@@ -71,16 +102,13 @@ void loop() {
 			else {
 				state = notTouched;
 			}
-			delay(1);
 		}
-		sigDraw.drawBlank();
+		signalDrawer->drawBlank();
 		break;
 
 	case SIGNAL_DRAW_MENU_HANDLE:
-		Serial.println(point.x);
-		signalScaleAction = signalDrawMenuHandler.handleTouch(point).signalScaleEnum;
-		state = signalDrawMenuHandler.handleTouch(point).stateMachineEnum;
-		Serial.println(signalScaleAction);
+		menuAction = signalDrawerMenuHandler->handleTouch(point);
+		state = menuAction.stateMachineEnum;
 		break;
 
 	case MAIN_MENU:
@@ -89,12 +117,12 @@ void loop() {
 		break;
 
 	case SNAPSHOT:
-		snapshot = sigDraw.getPointsHistory();
+		snapshot = signalDrawer->getPointsHistory();
 		state = SIGNAL_DRAW;
 		break;
 
 	case SIGNAL_SCALE:
-		signalScaleHandler->action(signalScaleAction);
+		signalScaleHandler->action(menuAction.signalScaleEnum);
 		delay(10);
 		state = SIGNAL_DRAW;
 		break;
@@ -109,3 +137,4 @@ void loop() {
 		break;
 	}
 }
+

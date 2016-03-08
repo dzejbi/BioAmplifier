@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3;C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3\utils;C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3\avr;C:\Users\Jan\Documents\GitHubVisualStudio\BioAmplifier\main;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ILI9341_t3;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ILI9341_t3\utility;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\SPI;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\SPI\utility;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\XPT2046_Touchscreen;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\XPT2046_Touchscreen\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries;D:\VisualStudio\Common7\IDE\Extensions\4mrynttc.ecy\Micro Platforms\default\debuggers;C:\Users\Jan\Documents\Arduino\libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3;C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3\utils;C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3\avr;C:\Users\Jan\Documents\GitHubVisualStudio\BioAmplifier\main;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ADC;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ADC\utility;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ILI9341_t3;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ILI9341_t3\utility;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\SPI;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\SPI\utility;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\XPT2046_Touchscreen;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\XPT2046_Touchscreen\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries;D:\VisualStudio\Common7\IDE\Extensions\4mrynttc.ecy\Micro Platforms\default\debuggers;C:\Users\Jan\Documents\Arduino\libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>C:\Users\Jan\Documents\GitHubVisualStudio\BioAmplifier\main\__vm\.main.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <PreprocessorDefinitions>__HARDWARE_MK20dx256__;__HARDWARE_MK20DX256__;__MK20DX256__;TEENSYDUINO=126;ARDUINO=10606;F_CPU=96000000;ARDUINO_ARCH_AVR;USB_SERIAL;LAYOUT_US_ENGLISH;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -126,12 +126,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ADCHandler.h" />
     <ClInclude Include="BasicScreenProperties.h">
       <FileType>CppCode</FileType>
     </ClInclude>
     <ClInclude Include="Button.h">
       <FileType>CppCode</FileType>
     </ClInclude>
+    <ClInclude Include="DigitMenuHandler.h" />
     <ClInclude Include="MenuHandler.h">
       <FileType>CppCode</FileType>
     </ClInclude>
@@ -153,8 +155,10 @@
     <ClInclude Include="__vm\.main.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ADCHandler.cpp" />
     <ClCompile Include="BasicScreenProperties.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="DigitMenuHandler.cpp" />
     <ClCompile Include="MenuHandler.cpp" />
     <ClCompile Include="signalDrawer.cpp" />
     <ClCompile Include="SignalDrawerMenuHandler.cpp" />

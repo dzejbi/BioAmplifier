@@ -57,10 +57,14 @@ typedef void *__builtin_va_list;
 
 #define NEW_H
 #include <..\main\main.ino>
+#include <..\main\ADCHandler.cpp>
+#include <..\main\ADCHandler.h>
 #include <..\main\BasicScreenProperties.cpp>
 #include <..\main\BasicScreenProperties.h>
 #include <..\main\Button.cpp>
 #include <..\main\Button.h>
+#include <..\main\DigitMenuHandler.cpp>
+#include <..\main\DigitMenuHandler.h>
 #include <..\main\MenuHandler.cpp>
 #include <..\main\MenuHandler.h>
 #include <..\main\SignalDrawerMenuHandler.cpp>

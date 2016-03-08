@@ -49,3 +49,6 @@ void Button::setCursor(uint16_t cursor_x, uint16_t cursor_y, char textSize)
 	this->textSize = textSize;
 }
 
+void Button::setColor(uint16_t color) {
+	this->color = color;
+}

@@ -69,14 +69,6 @@ void SignalDrawerMenuHandler::drawMenu()
 	}
 }
 
-void SignalDrawerMenuHandler::drawButton(Button b) {
-
-	tft->fillRoundRect(b.x0, b.y0, b.width, b.height, b.radius, b.color);
-	tft->setTextColor(b.nameColor);
-	tft->setTextSize(b.textSize);
-	tft->setCursor(b.cursor_x, b.cursor_y);
-	tft->print(b.name);
-}
 
 Button SignalDrawerMenuHandler::whatButtonWasPressed(TS_Point p)
 {
@@ -160,9 +152,19 @@ void SignalDrawerMenuHandler::createButtonAppearance() {
 	buttonArray[7].textSize = 3;
 }
 
+void SignalDrawerMenuHandler::drawButton(Button b) {
+
+	tft->fillRoundRect(b.x0, b.y0, b.width, b.height, b.radius, b.color);
+	tft->setTextColor(b.nameColor);
+	tft->setTextSize(b.textSize);
+	tft->setCursor(b.cursor_x, b.cursor_y);
+	tft->print(b.name);
+}
+
 SignalDrawerMenuHandler::SignalDrawerMenuHandler(ILI9341_t3 * tft)
 {
 	this->tft = tft;
 	createButtonArray();
 	createButtonAppearance();
 }
+
