@@ -21,9 +21,9 @@
 //Objects initialization
 XPT2046_Touchscreen* ts = new XPT2046_Touchscreen(CS_PIN);
 ILI9341_t3* tft = new ILI9341_t3(TFT_CS, TFT_DC, TFT_RST);
-SignalScaleHandler* signalScaleHandler = new SignalScaleHandler(tft);
-SignalDrawer* signalDrawer = new SignalDrawer(tft, signalScaleHandler);
 ADCHandler* adc = new ADCHandler();
+SignalScaleHandler* signalScaleHandler = new SignalScaleHandler(tft, adc);
+SignalDrawer* signalDrawer = new SignalDrawer(tft, signalScaleHandler);
 SignalDrawerMenuHandler* signalDrawerMenuHandler = new SignalDrawerMenuHandler(tft);
 DigitMenuHandler* digitMenuHandler = new DigitMenuHandler(tft);
 
@@ -38,6 +38,7 @@ float* adcValue;
 TS_Point point;
 uint16_t* snapshot;
 MenuHandler* menuHandler;
+String info;
 
 
 //Debug variables
@@ -50,7 +51,7 @@ void setup() {
 	Serial.begin(9600);
 	ts->begin();
 	//while(!Serial);
-	adc->start();
+	adc->begin();
 	Serial.println("Setup done");
 }
 
@@ -77,6 +78,7 @@ void loop() {
 		if (ts->touched()) {
 			//TODO
 			state = DRAW_MENU;
+			Serial.println("touch1");
 		}
 		else {
 			state = notTouched;
@@ -97,6 +99,7 @@ void loop() {
 			if (ts->touched()) {
 				point = ts->getPoint();
 				state = menu;
+				Serial.println("touch2");
 				break;
 			}
 			else {
@@ -113,27 +116,33 @@ void loop() {
 
 	case MAIN_MENU:
 		//TODO main menu
+		signalDrawer->drawInfo("Menu");
 		state = SIGNAL_DRAW;
 		break;
 
 	case SNAPSHOT:
 		snapshot = signalDrawer->getPointsHistory();
+		signalDrawer->drawInfo("Snapshot taken");
 		state = SIGNAL_DRAW;
 		break;
 
 	case SIGNAL_SCALE:
-		signalScaleHandler->action(menuAction.signalScaleEnum);
-		delay(10);
+		info = signalScaleHandler->action(menuAction.signalScaleEnum);
+		signalDrawer->reset();
+		if (!info.equals("OK")) {
+			signalDrawer->drawInfo(info);
+		}
 		state = SIGNAL_DRAW;
 		break;
 
 	case SCALE_MENU:
-		//TODO
+		signalDrawer->drawInfo("Scale Menu");
 		state = SIGNAL_DRAW;
 		break;
 
 	default:
 		Serial.println("Error");
+		signalDrawer->drawInfo("ERROR");
 		break;
 	}
 }

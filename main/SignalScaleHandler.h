@@ -9,15 +9,17 @@
 
 #include <ILI9341_t3.h>
 #include "SignalScaleActionsEnum.h"
+#include "ADCHandler.h"
 
 class SignalScaleHandler
 {
 private:
 	ILI9341_t3* tft;
-	uint16_t frequencyScale;
+	ADCHandler* adc;
+	uint16_t frequency;
 	uint16_t frequencyLowerLimit;
 	uint32_t frequencyUpperLimit;
-	uint16_t frequencyScaleStep;
+	uint16_t frequencyStep;
 
 	int16_t offset;
 	int16_t offsetLowerLimit;
@@ -29,21 +31,18 @@ private:
 	uint16_t amplitudeUpperLimit;
 	uint16_t amplitudeScaleStep;
 
-	void decreaseOffset();
-	void increaseOffset();
-	void decreaseFrequency();
-	void increaseFrequency();
-	void decreaseAmplitude();
-	void increaseAmplitude();
-	//TODO return enumem StateMachnieEnum i  stringiem Info
-	void drawLimitInfo();
+	String decreaseOffset();
+	String increaseOffset();
+	String decreaseFrequency();
+	String increaseFrequency();
+	String decreaseAmplitude();
+	String increaseAmplitude();
 
 public:
-	SignalScaleHandler(ILI9341_t3 * tft);
+	SignalScaleHandler(ILI9341_t3 * tft, ADCHandler * adc);
 	uint16_t adjustAmplitude(float amplitudeReading);
-	void measurmentDelay();
 	void begin();
-	void action(SignalScaleEnum action);
+	String action(SignalScaleEnum action);
 };
 
 #endif

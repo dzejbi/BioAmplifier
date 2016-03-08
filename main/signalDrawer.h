@@ -32,6 +32,7 @@ class SignalDrawer{
 
 	void drawSignal(uint16_t* signal);
 	void drawSignal(float newPoint);
+	void drawInfo(String info);
 
 	uint16_t* getPointsHistory();
 

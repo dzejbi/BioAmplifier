@@ -14,12 +14,12 @@ void ADCHandler::convertToVolts()
 }
 
 
-void ADCHandler::start()
+void ADCHandler::begin()
 {
 	pValueVolts = &valueVolts;
 	analogPin = A2;
 	resolution = 12;
-	freq = 1;
+	freq = 50;
 	flag = false;
 	referenceVoltage = 3.3;
 
@@ -38,6 +38,14 @@ void ADCHandler::start()
 void ADCHandler::stop()
 {
 	adc1->stopPDB();
+}
+
+void ADCHandler::updatePDB(uint16_t frequency)
+{	
+	setFrequency(frequency);
+	adc1->stopPDB();
+	adc1->startPDB(freq);
+	Serial.println(freq);
 }
 
 float* ADCHandler::getNewValue()

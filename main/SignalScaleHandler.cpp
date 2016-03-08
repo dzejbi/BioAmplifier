@@ -1,128 +1,126 @@
 #include "SignalScaleHandler.h"
 
-SignalScaleHandler::SignalScaleHandler(ILI9341_t3* tft)
+SignalScaleHandler::SignalScaleHandler(ILI9341_t3* tft, ADCHandler* adc)
 {
 	this->tft = tft;
+	this->adc = adc;
 }
 
-void SignalScaleHandler::decreaseOffset(){
+String SignalScaleHandler::decreaseOffset() {
 
 	if (offset - offsetStep > offsetLowerLimit) {
 		offset -= offsetStep;
+		return "OK";
 	}
 	else {
-		drawLimitInfo();
+		return "Limit Reached";
 	}
 }
 
-void SignalScaleHandler::increaseOffset() {
+String SignalScaleHandler::increaseOffset() {
 
 	if (offset + offsetStep < offsetUpperLimit) {
 		offset += offsetStep;
+		return "OK";
 	}
 	else {
-		drawLimitInfo();
+		return "Limit Reached";
 	}
 }
 
-void SignalScaleHandler::decreaseFrequency() {
+String SignalScaleHandler::decreaseFrequency() {
 
-	if (frequencyScale - frequencyScaleStep > frequencyLowerLimit) {
-		frequencyScale -= frequencyScaleStep;
+	if (frequency - frequencyStep > frequencyLowerLimit) {
+		frequency -= frequencyStep;
+		adc->updatePDB(frequency);
+		return "OK";
 	}
 	else {
-		drawLimitInfo();
+		return "Limit Reached";
 	}
 }
 
-void SignalScaleHandler::increaseFrequency() {
+String SignalScaleHandler::increaseFrequency() {
 
-	if (frequencyScale + frequencyScaleStep < frequencyUpperLimit) {
-		frequencyScale += frequencyScaleStep;
+	if (frequency + frequencyStep < frequencyUpperLimit) {
+		frequency += frequencyStep;
+		adc->updatePDB(frequency);
+		return "OK";
 	}
 	else {
-		drawLimitInfo();
+		return "Limit Reached";
 	}
 }
 
-void SignalScaleHandler::decreaseAmplitude() {
+String SignalScaleHandler::decreaseAmplitude() {
 
 	if (amplitudeScale + amplitudeScaleStep < amplitudeUpperLimit) {
 		amplitudeScale += amplitudeScaleStep;
+		return "OK";
 	}
 	else {
-		drawLimitInfo();
+		return "Limit Reached";
 	}
 }
 
-void SignalScaleHandler::increaseAmplitude() {
+String SignalScaleHandler::increaseAmplitude() {
 
 	if (amplitudeScale - amplitudeScaleStep > amplitudeLowerLimit) {
 		amplitudeScale -= amplitudeScaleStep;
+		return "OK";
 	}
 	else {
-		drawLimitInfo();
+		return "Limit Reached";
 	}
 }
 
-void SignalScaleHandler::drawLimitInfo()
-{
-	tft->fillScreen(ILI9341_BLACK);
-	tft->setCursor(50, 105);
-	tft->setTextColor(ILI9341_RED);
-	tft->setTextSize(3);
-	tft->print("LIMIT REACHED");
-	delay(1000);
-}
 
 uint16_t SignalScaleHandler::adjustAmplitude(float amplitudeReading)
 {
 	return (amplitudeReading * amplitudeScale) - offset;
 }
 
-void SignalScaleHandler::measurmentDelay()
-{
-	delayMicroseconds(frequencyScale);
-}
 
 void SignalScaleHandler::begin() {
-	this->frequencyScale = 50000;
+	this->frequency = 50;
 	this->amplitudeScale = 100;
 	this->offset = 0;
 	this->amplitudeScaleStep = 5;
-	this->frequencyScaleStep = 1000;
+	this->frequencyStep = 10;
 	this->offsetStep = 100;
-	this->frequencyLowerLimit = 0;
-	this->frequencyUpperLimit = 1000000;
+	this->frequencyLowerLimit = 1;
+	this->frequencyUpperLimit = 5000;
 	this->offsetLowerLimit = -500;
 	this->offsetUpperLimit = 1000;
 	this->amplitudeLowerLimit = 1;
 	this->amplitudeUpperLimit = 100;
 }
 
-void SignalScaleHandler::action(SignalScaleEnum action)
+String SignalScaleHandler::action(SignalScaleEnum action)
 {
+	String info;
 	switch (action)
 	{
 	case INCREASE_AMPLITUDE:
-		increaseAmplitude();
+		info = increaseAmplitude();
 		break;
 	case DECREASE_AMPLITUDE:
-		decreaseAmplitude();
+		info = decreaseAmplitude();
 		break;
 	case INCREASE_FREQUENCY:
-		increaseFrequency();
+		info = increaseFrequency();
 		break;
 	case DECREASE_FREQUENCY:
-		decreaseFrequency();
+		 info = decreaseFrequency();
 		break;
 	case INCREASE_OFFSET:
-		increaseOffset();
+		info = increaseOffset();
 		break;
 	case DECREASE_OFFSET:
-		decreaseOffset();
+		info = decreaseOffset();
 		break;
 	default:
 		break;
 	}
+	return info;
 }

@@ -22,11 +22,15 @@ private:
 	float *pValueVolts;
 	void convertToVolts();
 public:
-	uint16_t value;
 	bool volatile flag;
-	void start();
+
+	void begin();
 	void stop();
+	void updatePDB(uint16_t resolution);
+
+	uint16_t value;
 	float* getNewValue();
+
 	void setFrequency(uint16_t freq);
 	void setResolution(char resolution);
 	void setAnalogPin(uint8_t pin);

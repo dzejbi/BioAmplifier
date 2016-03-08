@@ -42,6 +42,17 @@ void SignalDrawer::drawSignal(float newPoint) {
 	addPointToHistory();
 }
 
+void SignalDrawer::drawInfo(String info)
+{
+	tft->fillScreen(ILI9341_BLACK);
+	tft->setCursor(50, 105);
+	tft->setTextColor(ILI9341_RED);
+	tft->setTextSize(3);
+	tft->print(info);
+	delay(1000);
+	reset();
+}
+
 void SignalDrawer::drawSignal(uint16_t* signal) {
 
 	signal[0] = signal[1];
