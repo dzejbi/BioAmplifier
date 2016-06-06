@@ -8,31 +8,26 @@
 extern unsigned long mic;
 extern unsigned long mic2;
 
-void ADCHandler::convertToVolts()
-{
-	valueVolts = float((value*referenceVoltage) /getMaxValue(ADC_1));
-}
-
-
 void ADCHandler::begin()
 {
 	pValueVolts = &valueVolts;
 	analogPin = A2;
 	resolution = 12;
-	freq = 50;
+	freq = 1;
 	flag = false;
 	referenceVoltage = 3.3;
 
-	setAveraging(16, ADC_1);
+	setAveraging(32, ADC_1);
 	setResolution(resolution);
-	setConversionSpeed(ADC_LOW_SPEED, ADC_1);
-	setSamplingSpeed(ADC_LOW_SPEED, ADC_1);
+	setConversionSpeed(ADC_HIGH_SPEED, ADC_1);
+	setSamplingSpeed(ADC_HIGH_SPEED, ADC_1);
 	enableInterrupts(ADC_1);
 	enableCompare(getMaxValue(ADC_1), 0, ADC_1);
 	analogRead(analogPin, ADC_1); // call this to setup everything before the pdb starts
 
 	adc1->stopPDB();
 	adc1->startPDB(freq);
+	Serial.println("ADC setup complete");
 }
 
 void ADCHandler::stop()
@@ -45,10 +40,11 @@ void ADCHandler::updatePDB(uint16_t frequency)
 	setFrequency(frequency);
 	adc1->stopPDB();
 	adc1->startPDB(freq);
+	Serial.print("PDB frequency is set to ");
 	Serial.println(freq);
 }
 
-float* ADCHandler::getNewValue()
+volatile float* ADCHandler::getNewValue()
 {	
 	convertToVolts();
 	if (flag) {
@@ -59,6 +55,12 @@ float* ADCHandler::getNewValue()
 		return nullptr;
 	}
 }
+
+void ADCHandler::convertToVolts()
+{
+	valueVolts = double((value*referenceVoltage) / getMaxValue(ADC_1));
+}
+
 
 void ADCHandler::setFrequency(uint16_t freq)
 {
@@ -81,9 +83,9 @@ void adc1_isr()
 {
 	adc->flag = true;
 	adc->value = (uint16_t)adc->analogReadContinuous(ADC_1);
-	mic2 = micros() - mic;
-	Serial.println(mic2);
-	mic = micros();
+	//mic2 = micros() - mic;
+	//serial.println(mic2);
+	//mic = micros();
 }
 
 

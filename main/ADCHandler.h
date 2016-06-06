@@ -18,8 +18,8 @@ private:
 	uint8_t analogPin;
 	char resolution;
 	uint16_t freq;
-	float valueVolts;
-	float *pValueVolts;
+	volatile float valueVolts;
+	volatile float *pValueVolts;
 	void convertToVolts();
 public:
 	bool volatile flag;
@@ -29,7 +29,7 @@ public:
 	void updatePDB(uint16_t resolution);
 
 	uint16_t value;
-	float* getNewValue();
+	volatile float* getNewValue();
 
 	void setFrequency(uint16_t freq);
 	void setResolution(char resolution);
