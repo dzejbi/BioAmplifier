@@ -10,16 +10,8 @@
 ADCHandler* adc = new ADCHandler();
 
 
-//Variables used in State Machine
-volatile float* adcValue;
 String buffer = "";
 int count = 0;
-
-
-//Debug variables
-unsigned long mic;
-unsigned long mic2;
-
 
 
 void setup() {
@@ -32,13 +24,12 @@ void setup() {
 
 void loop() {
 	
-		adcValue = adc->getNewValue();
-		if (adcValue != nullptr) {
-			buffer += String(*adcValue, 3) ;
+		if (adc->flag) {
+			buffer += String(adc->getNewValue(), 3) ;
 			buffer += ",";
 			count++;
-		//	Serial.println(*adcValue,5);
 		}
+
 		if (count == 200) {
 			Serial.print(buffer);
 			buffer = "";

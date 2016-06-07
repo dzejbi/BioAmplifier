@@ -4,9 +4,7 @@
 
 #include "ADCHandler.h"
 
-//Debug variables
-extern unsigned long mic;
-extern unsigned long mic2;
+extern ADCHandler* adc;
 
 void ADCHandler::begin()
 {
@@ -23,7 +21,7 @@ void ADCHandler::begin()
 	setSamplingSpeed(ADC_HIGH_SPEED, ADC_1);
 	enableInterrupts(ADC_1);
 	enableCompare(getMaxValue(ADC_1), 0, ADC_1);
-	analogRead(analogPin, ADC_1); // call this to setup everything before the pdb starts
+	analogRead(analogPin, ADC_1); 
 
 	adc1->stopPDB();
 	adc1->startPDB(freq);
@@ -44,23 +42,17 @@ void ADCHandler::updatePDB(uint16_t frequency)
 	Serial.println(freq);
 }
 
-volatile float* ADCHandler::getNewValue()
-{	
-	convertToVolts();
-	if (flag) {
-		flag = false;
-		return pValueVolts;
-	}
-	else {
-		return nullptr;
-	}
-}
 
 void ADCHandler::convertToVolts()
 {
 	valueVolts = double((value*referenceVoltage) / getMaxValue(ADC_1));
 }
 
+
+volatile float ADCHandler::getNewValue()
+{
+	return value;
+}
 
 void ADCHandler::setFrequency(uint16_t freq)
 {
@@ -77,15 +69,10 @@ void ADCHandler::setAnalogPin(uint8_t pin)
 	this->analogPin = pin;
 }
 
-extern ADCHandler* adc;
-
 void adc1_isr()
 {
 	adc->flag = true;
 	adc->value = (uint16_t)adc->analogReadContinuous(ADC_1);
-	//mic2 = micros() - mic;
-	//serial.println(mic2);
-	//mic = micros();
 }
 
 

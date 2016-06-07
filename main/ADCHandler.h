@@ -23,13 +23,12 @@ private:
 	void convertToVolts();
 public:
 	bool volatile flag;
-
 	void begin();
 	void stop();
 	void updatePDB(uint16_t resolution);
 
 	uint16_t value;
-	volatile float* getNewValue();
+	volatile float getNewValue();
 
 	void setFrequency(uint16_t freq);
 	void setResolution(char resolution);
