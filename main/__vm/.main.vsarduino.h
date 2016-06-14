@@ -59,4 +59,10 @@ typedef void *__builtin_va_list;
 #include <..\main\main.ino>
 #include <..\main\ADCHandler.cpp>
 #include <..\main\ADCHandler.h>
+#include <..\main\Amplifier.cpp>
+#include <..\main\Amplifier.h>
+#include <..\main\Filter.cpp>
+#include <..\main\Filter.h>
+#include <..\main\Settings.cpp>
+#include <..\main\Settings.h>
 #endif

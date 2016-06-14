@@ -127,10 +127,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ADCHandler.h" />
+    <ClInclude Include="Amplifier.h" />
+    <ClInclude Include="Filter.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="__vm\.main.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ADCHandler.cpp" />
+    <ClCompile Include="Amplifier.cpp" />
+    <ClCompile Include="Filter.cpp" />
+    <ClCompile Include="Settings.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

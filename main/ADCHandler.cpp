@@ -6,26 +6,27 @@
 
 extern ADCHandler* adc;
 
-void ADCHandler::begin()
+void ADCHandler::update()
 {
-	pValueVolts = &valueVolts;
-	analogPin = A2;
-	resolution = 12;
-	freq = 1;
-	flag = false;
-	referenceVoltage = 3.3;
-
 	setAveraging(32, ADC_1);
-	setResolution(resolution);
 	setConversionSpeed(ADC_HIGH_SPEED, ADC_1);
-	setSamplingSpeed(ADC_HIGH_SPEED, ADC_1);
+	setSamplingSpeed(ADC_MED_SPEED, ADC_1);
 	enableInterrupts(ADC_1);
 	enableCompare(getMaxValue(ADC_1), 0, ADC_1);
-	analogRead(analogPin, ADC_1); 
+	analogRead(analogPin, ADC_1);
 
 	adc1->stopPDB();
-	adc1->startPDB(freq);
-	Serial.println("ADC setup complete");
+	adc1->startPDB(frequency);
+}
+
+void ADCHandler::begin()
+{
+	analogPin = A2;
+	resolution = 12;
+	frequency = 1;
+	flag = false;
+	setResolution(resolution);
+	update();
 }
 
 void ADCHandler::stop()
@@ -33,46 +34,43 @@ void ADCHandler::stop()
 	adc1->stopPDB();
 }
 
-void ADCHandler::updatePDB(uint16_t frequency)
+
+void ADCHandler::setFrequency(uint16_t frequency)
 {	
-	setFrequency(frequency);
+	this->frequency = frequency;
 	adc1->stopPDB();
-	adc1->startPDB(freq);
-	Serial.print("PDB frequency is set to ");
-	Serial.println(freq);
+	adc1->startPDB(frequency);
 }
 
 
-void ADCHandler::convertToVolts()
+void ADCHandler::setNewValue(uint16_t value)
 {
-	valueVolts = double((value*referenceVoltage) / getMaxValue(ADC_1));
+	this->value = value;
 }
 
-
-volatile float ADCHandler::getNewValue()
+volatile uint16_t ADCHandler::getNewValue()
 {
+	flag = false;
 	return value;
 }
 
-void ADCHandler::setFrequency(uint16_t freq)
-{
-	this->freq = freq;
-}
 
 void ADCHandler::setResolution(char resolution)
 {
 	this->resolution = resolution;
+	this->update();
 }
 
 void ADCHandler::setAnalogPin(uint8_t pin)
 {
 	this->analogPin = pin;
+	this->update();
 }
 
 void adc1_isr()
 {
 	adc->flag = true;
-	adc->value = (uint16_t)adc->analogReadContinuous(ADC_1);
+	adc->setNewValue((uint16_t)adc->analogReadContinuous(ADC_1));
 }
 
 

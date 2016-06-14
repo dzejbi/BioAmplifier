@@ -14,21 +14,19 @@
 class ADCHandler : public ADC
 {
 private:
-	float referenceVoltage;
 	uint8_t analogPin;
 	char resolution;
-	uint16_t freq;
-	volatile float valueVolts;
-	volatile float *pValueVolts;
-	void convertToVolts();
+	uint16_t frequency;
+	uint16_t value;
+	void update();
+
 public:
 	bool volatile flag;
 	void begin();
 	void stop();
-	void updatePDB(uint16_t resolution);
 
-	uint16_t value;
-	volatile float getNewValue();
+	void setNewValue(uint16_t value);
+	volatile uint16_t getNewValue();
 
 	void setFrequency(uint16_t freq);
 	void setResolution(char resolution);
