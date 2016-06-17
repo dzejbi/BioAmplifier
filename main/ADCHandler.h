@@ -29,7 +29,7 @@ public:
 	volatile uint16_t getNewValue();
 
 	void setFrequency(uint16_t freq);
-	void setResolution(char resolution);
+	void setResolutionADC(char resolution);
 	void setAnalogPin(uint8_t pin);
 };
 

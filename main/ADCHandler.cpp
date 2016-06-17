@@ -9,6 +9,7 @@ extern ADCHandler* adc;
 void ADCHandler::update()
 {
 	setAveraging(32, ADC_1);
+	setResolution(resolution, ADC_1);
 	setConversionSpeed(ADC_HIGH_SPEED, ADC_1);
 	setSamplingSpeed(ADC_MED_SPEED, ADC_1);
 	enableInterrupts(ADC_1);
@@ -25,7 +26,6 @@ void ADCHandler::begin()
 	resolution = 12;
 	frequency = 1;
 	flag = false;
-	setResolution(resolution);
 	update();
 }
 
@@ -55,7 +55,7 @@ volatile uint16_t ADCHandler::getNewValue()
 }
 
 
-void ADCHandler::setResolution(char resolution)
+void ADCHandler::setResolutionADC(char resolution)
 {
 	this->resolution = resolution;
 	this->update();

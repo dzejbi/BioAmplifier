@@ -48,6 +48,7 @@ int count = 0;
 
 //TODO which pin?
 const int motor = 8;
+bool isBiofeedbackOn = false;
 int biofeedbackStrength = 0;
 float biofeedbackThreshold;
 
@@ -55,8 +56,9 @@ bool isBiofeedback = true;
 
 
 void setup() {
+	pinMode(motor, OUTPUT);
 	Serial.begin(9600);
-	while (!Serial);
+	Serial.setTimeout(1);
 	filter->begin();
 	amplifier->begin();
 	adc->begin();
@@ -99,10 +101,7 @@ void loop() {
 		break;
 
 	case CHECK_DATA:
-		//m1 = micros();
 		if (Serial.available()) {
-			buffer = "";
-			count = 0;
 			SM = READ_DATA;
 		}
 		else {
@@ -122,13 +121,13 @@ void loop() {
 	case READ_DATA:
 		//TODO Labview send data 0/1, change function reciveData
 		isBiofeedback = Serial.parseInt();
-
 		if (isBiofeedback) {
-			biofeedbackStrength = Serial.parseInt();
 			SM = SUPPLY_MOTOR;
 		}
 		else {
 			settings = reciveData();
+			buffer = "";
+			count = 0;
 			SM = UPDATE_SETTINGS;
 		}
 		break;
@@ -151,8 +150,15 @@ void loop() {
 		break;
 
 	case SUPPLY_MOTOR:
-		analogWrite(motor, biofeedbackStrength);
+		isBiofeedbackOn = !isBiofeedbackOn;
+		if (isBiofeedbackOn) {
+			digitalWriteFast(motor, HIGH);
+		}
+		else {
+			digitalWriteFast(motor, LOW);
+		}
 		SM = SEND;
+		Serial.println(micros() - m1);
 		break;
 
 	case ACQUIRE_NC:
@@ -166,7 +172,6 @@ void loop() {
 
 		}
 		if (count == bufferSizeSave) {
-
 			SM = BIOFEEDBACK_CALC;
 		}
 		break;
@@ -196,8 +201,10 @@ void loop() {
 
 Settings reciveData() {
 
-	long settings[8];
+	long settings[10];
 	Settings temp;
+
+	Serial.setTimeout(1000);
 
 	for (int i = 0; i<8; i++) {
 		settings[i] = Serial.parseInt();
@@ -210,7 +217,11 @@ Settings reciveData() {
 	temp.RGain = settings[4];
 	temp.bufferSizeSave = settings[5];
 	temp.frequency = settings[6];
-	temp.bufferSize = settings[7];
+	temp.averaging = settings[7];
+	temp.resolution = settings[8];
+	temp.bufferSize = settings[9];
+
+	Serial.setTimeout(1);
 
 	return temp;
 }

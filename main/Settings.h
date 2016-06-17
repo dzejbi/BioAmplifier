@@ -16,6 +16,8 @@ struct Settings{
 	int RGain;
 	int bufferSizeSave;
 	int frequency;
+	int resolution;
+	int averaging;
 	int bufferSize;
 };
 
