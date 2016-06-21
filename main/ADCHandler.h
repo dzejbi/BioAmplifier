@@ -16,6 +16,8 @@ class ADCHandler : public ADC
 private:
 	uint8_t analogPin;
 	char resolution;
+	char averaging;
+	char sampling;
 	uint16_t frequency;
 	uint16_t value;
 	void update();
@@ -30,6 +32,8 @@ public:
 
 	void setFrequency(uint16_t freq);
 	void setResolutionADC(char resolution);
+	void setAveragingADC(char averaging);
+	void setSamplingADC(char sampling);
 	void setAnalogPin(uint8_t pin);
 };
 

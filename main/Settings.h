@@ -18,6 +18,7 @@ struct Settings{
 	int frequency;
 	int resolution;
 	int averaging;
+	int samplingSpeed;
 	int bufferSize;
 };
 
@@ -25,6 +26,7 @@ class SettingsHandler {
 public:
 	void save(Settings settings);
 	Settings load();
+	Settings reciveData();
 };
 
 #endif
