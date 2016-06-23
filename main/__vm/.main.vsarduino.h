@@ -63,6 +63,8 @@ typedef void *__builtin_va_list;
 #include <..\main\Amplifier.h>
 #include <..\main\Filter.cpp>
 #include <..\main\Filter.h>
+#include <..\main\SDSaver.cpp>
+#include <..\main\SDSaver.h>
 #include <..\main\Settings.cpp>
 #include <..\main\Settings.h>
 #endif

@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3;C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3\utils;C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3\avr;C:\Users\Jan\Documents\GitHubVisualStudio\BioAmplifier\main;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ADC;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ADC\utility;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\SPI;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\SPI\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries;D:\VisualStudio\Common7\IDE\Extensions\4mrynttc.ecy\Micro Platforms\default\debuggers;C:\Users\Jan\Documents\Arduino\libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3;C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3\utils;C:\Program Files (x86)\Arduino\hardware\teensy\avr\cores\teensy3\avr;C:\Users\Jan\Documents\GitHubVisualStudio\BioAmplifier\main;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ADC;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\ADC\utility;C:\Users\Jan\Documents\Arduino\libraries\SdFat;C:\Users\Jan\Documents\Arduino\libraries\SdFat\utility;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\SPI;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries\SPI\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\teensy\avr\libraries;D:\VisualStudio\Common7\IDE\Extensions\4mrynttc.ecy\Micro Platforms\default\debuggers;C:\Users\Jan\Documents\Arduino\libraries;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>C:\Users\Jan\Documents\GitHubVisualStudio\BioAmplifier\main\__vm\.main.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <PreprocessorDefinitions>__HARDWARE_MK20dx256__;__HARDWARE_MK20DX256__;__MK20DX256__;TEENSYDUINO=126;ARDUINO=10606;F_CPU=96000000;ARDUINO_ARCH_AVR;USB_SERIAL;LAYOUT_US_ENGLISH;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -129,6 +129,7 @@
     <ClInclude Include="ADCHandler.h" />
     <ClInclude Include="Amplifier.h" />
     <ClInclude Include="Filter.h" />
+    <ClInclude Include="SDSaver.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="__vm\.main.vsarduino.h" />
   </ItemGroup>
@@ -136,6 +137,7 @@
     <ClCompile Include="ADCHandler.cpp" />
     <ClCompile Include="Amplifier.cpp" />
     <ClCompile Include="Filter.cpp" />
+    <ClCompile Include="SDSaver.cpp" />
     <ClCompile Include="Settings.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,4 +1,23 @@
 
+#include <SdVolume.h>
+#include <SdStream.h>
+#include <SdInfo.h>
+#include <SdFile.h>
+#include <SdFatUtil.h>
+#include <SdFatStructs.h>
+#include <SdFatmainpage.h>
+#include <SdFatConfig.h>
+#include <SdFat.h>
+#include <SdBaseFile.h>
+#include <Sd2Card.h>
+#include <ostream.h>
+#include <MinimumSerial.h>
+#include <istream.h>
+#include <iostream.h>
+#include <ios.h>
+#include <bufstream.h>
+#include <ArduinoStream.h>
+#include "SDSaver.h"
 #include "Settings.h"
 #include "Amplifier.h"
 #include "Filter.h"
@@ -11,6 +30,7 @@
 
 enum StateMachine
 {
+	CARD_DETECTION,
 	LOAD_SETTINGS,
 	CHECK_CONNECTION,
 	ACQUIRE,
@@ -23,7 +43,7 @@ enum StateMachine
 	SAVE_SETTINGS, 
 	ACQUIRE_NC,
 	SUPPLY_MOTOR_NC,
-	CHECK_DATA
+	CHECK_SERIAL
 };
 
 
@@ -37,6 +57,7 @@ ADCHandler* adc = new ADCHandler();
 Filter* filter = new Filter();
 Amplifier* amplifier = new Amplifier();
 SettingsHandler* SH = new SettingsHandler();
+SDSaver* SD = new SDSaver();
 
 Settings settings;
 String buffer = "";
@@ -50,7 +71,7 @@ int count = 0;
 const int motor = 8;
 bool isBiofeedbackOn = false;
 float biofeedbackThreshold;
-bool isBiofeedback = true;
+bool isBiofeedback = false;
 
 
 void setup() {
@@ -59,7 +80,7 @@ void setup() {
 	Serial.setTimeout(1);
 	filter->begin();
 	amplifier->begin();
-	adc->begin();
+	adc->begin();	
 }
 
 void loop() {
@@ -78,7 +99,16 @@ void loop() {
 		adc->setSamplingADC(settings.samplingSpeed);
 		bufferSize = settings.bufferSize;
 		bufferSizeSave = settings.bufferSizeSave;
-		SM = CHECK_CONNECTION;
+		SM = CARD_DETECTION;
+		break;
+
+	case CARD_DETECTION:
+		if (SD->begin()) {
+			SM = ACQUIRE_NC;
+		}
+		else {
+			SM = CHECK_CONNECTION;
+		}
 		break;
 
 	case CHECK_CONNECTION:
@@ -94,11 +124,11 @@ void loop() {
 		}
 
 		if (count == bufferSize) {
-			SM = CHECK_DATA;
+			SM = CHECK_SERIAL;
 		}
 		break;
 
-	case CHECK_DATA:
+	case CHECK_SERIAL:
 		if (Serial.available()) {
 			SM = READ_DATA;
 		}
@@ -128,7 +158,6 @@ void loop() {
 		break;
 
 	case UPDATE_SETTINGS:
-		//TODO update all settings
 		filter->setFrequency(settings);
 		if (settings.RGain) {
 			amplifier->setGain(settings.RGain);
@@ -156,12 +185,12 @@ void loop() {
 			digitalWriteFast(motor, LOW);
 		}
 		SM = SEND;
-		Serial.println(micros() - m1);
 		break;
 
 	case ACQUIRE_NC:
 		if (adc->flag) {
 			value = adc->getNewValue();
+			SD->save(value);
 			sum += value;
 			buffer += String(value);
 			buffer += ",";
@@ -169,23 +198,36 @@ void loop() {
 
 		}
 		if (count == bufferSizeSave) {
+			Serial.println(micros() - m1);
+			m1 = micros();
 			SM = BIOFEEDBACK_CALC;
 		}
 		break;
 
 	case BIOFEEDBACK_CALC:
-		sum = sum / count;
+		/*sum = sum / count;
 		if (sum >= biofeedbackThreshold) {
 			isBiofeedback = true;
 		}
 		else {
 			isBiofeedback = false;
-		}
+		}*/
 		SM = SUPPLY_MOTOR_NC;
 		break;
 
 	case SAVE:
-		//TODO: microsd save
+		static int a = 1;
+		if (a < 100) {
+			a++;
+		}
+		else {
+			m1 = micros();
+			SD->sync();
+			Serial.print("sync: ");
+			Serial.println(micros() - m1);
+		}
+		buffer = "";
+		count = 0;
 		SM = ACQUIRE_NC;
 		break;
 
